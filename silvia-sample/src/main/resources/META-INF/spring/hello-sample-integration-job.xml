@@ -1,0 +1,43 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:batch="http://www.springframework.org/schema/batch"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+    <bean id="hello" class="org.beer30.silvia.sample.hello.PrintTasklet">
+        <property name="message" value="Hello"/>
+    </bean>
+
+    <bean id="space" class="org.beer30.silvia.sample.hello.PrintTasklet">
+        <property name="message" value=" "/>
+    </bean>
+
+    <bean id="world" class="org.beer30.silvia.sample.hello.PrintTasklet">
+        <property name="message" value="World!"/>
+    </bean>
+
+    <bean id="taskletStep" abstract="true"
+          class="org.springframework.batch.core.step.tasklet.TaskletStep">
+        <property name="jobRepository" ref="jobRepository"/>
+    </bean>
+
+    <batch:job id="helloSampleJob">
+        <batch:step id="helloStep" next="spaceStep" >
+            <batch:tasklet ref="hello" />
+        </batch:step>
+        <batch:step id="spaceStep" next="worldStep" >
+            <batch:tasklet ref="space" />
+        </batch:step>
+        <batch:step id="worldStep" >
+            <batch:tasklet ref="world" />
+        </batch:step>
+        <batch:listeners>
+            <batch:listener ref="notificationExecutionsListener"/>
+        </batch:listeners>
+    </batch:job>
+</beans>
